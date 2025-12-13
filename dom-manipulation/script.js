@@ -1,3 +1,4 @@
+// Array of quotes with text and category
 const quotes = [
   {
     text: "Code is like humor. When you have to explain it, it’s bad.",
@@ -7,9 +8,11 @@ const quotes = [
   { text: "Consistency beats motivation.", category: "Life" },
 ];
 
+// Select DOM elements
 const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteBtn = document.getElementById("newQuote");
 
+// Function to display a random quote
 function displayRandomQuote() {
   if (quotes.length === 0) {
     quoteDisplay.textContent = "No quotes available.";
@@ -25,6 +28,7 @@ function displayRandomQuote() {
   `;
 }
 
+// Function to add a new quote
 function addQuote() {
   const textInput = document.getElementById("newQuoteText");
   const categoryInput = document.getElementById("newQuoteCategory");
@@ -39,13 +43,16 @@ function addQuote() {
 
   quotes.push({ text, category });
 
+  // Clear inputs
   textInput.value = "";
   categoryInput.value = "";
 
+  // Show the new quote
   displayRandomQuote();
 }
 
+// Event listener for "Show New Quote" button
 newQuoteBtn.addEventListener("click", displayRandomQuote);
 
-// show first quote on load
+// Display a random quote when page loads
 displayRandomQuote();
