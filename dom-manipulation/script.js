@@ -86,28 +86,7 @@ function displaySingleQuote(quote) {
   sessionStorage.setItem("lastQuoteIndex", quotes.indexOf(quote));
 }
 
-// Add a new quote
-function createAddQuoteForm() {
-  const textInput = document.getElementById("newQuoteText");
-  const categoryInput = document.getElementById("newQuoteCategory");
-
-  const text = textInput.value.trim();
-  const category = categoryInput.value.trim();
-
-  if (!text || !category) {
-    alert("Please fill in both fields");
-    return;
-  }
-
-  quotes.push({ text, category });
-  saveQuotes();
-
-  textInput.value = "";
-  categoryInput.value = "";
-
-  populateCategories();
-  filterQuote();
-}
+// ------------------- Task 2: LocalStorage & JSON -------------------
 
 // Export quotes to JSON
 function exportToJson() {
@@ -148,7 +127,7 @@ function importFromJsonFile(event) {
 
 const SERVER_API = "https://jsonplaceholder.typicode.com/posts";
 
-// Fetch server quotes (ALX expects this function name)
+// Fetch server quotes
 async function fetchQuotesFromServer() {
   try {
     const response = await fetch(SERVER_API);
@@ -162,6 +141,23 @@ async function fetchQuotesFromServer() {
     resolveConflicts(serverQuotes);
   } catch (error) {
     console.error("Error fetching server quotes:", error);
+  }
+}
+
+// Post a new quote to the server (mock API)
+async function postQuoteToServer(quote) {
+  try {
+    const response = await fetch(SERVER_API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(quote)
+    });
+    const data = await response.json();
+    console.log("Quote posted to server:", data);
+  } catch (error) {
+    console.error("Error posting quote to server:", error);
   }
 }
 
@@ -184,7 +180,7 @@ function resolveConflicts(serverQuotes) {
   showNotification("Quotes synced with server");
 }
 
-// Notification
+// Notification helper
 function showNotification(msg) {
   const notif = document.createElement("div");
   notif.textContent = msg;
@@ -198,7 +194,34 @@ function showNotification(msg) {
   setTimeout(() => notif.remove(), 3000);
 }
 
-// Periodically sync every 60 seconds
+// ------------------- Add new quote -------------------
+
+function createAddQuoteForm() {
+  const textInput = document.getElementById("newQuoteText");
+  const categoryInput = document.getElementById("newQuoteCategory");
+
+  const text = textInput.value.trim();
+  const category = categoryInput.value.trim();
+
+  if (!text || !category) {
+    alert("Please fill in both fields");
+    return;
+  }
+
+  const newQuote = { text, category };
+  quotes.push(newQuote);
+  saveQuotes();
+
+  postQuoteToServer(newQuote); // Send to server
+
+  textInput.value = "";
+  categoryInput.value = "";
+
+  populateCategories();
+  filterQuote();
+}
+
+// Periodically sync with server every 60 seconds
 setInterval(fetchQuotesFromServer, 60000);
 
 // ------------------- Initialize -------------------
@@ -206,4 +229,3 @@ populateCategories();
 filterQuote();
 newQuoteBtn.addEventListener("click", showRandomQuote);
 categoryFilter.addEventListener("change", filterQuote);
-
