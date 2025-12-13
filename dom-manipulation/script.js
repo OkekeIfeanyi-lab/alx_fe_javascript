@@ -1,11 +1,10 @@
-// Load quotes from localStorage or default
+// ------------------- Task 1–3: Dynamic Quote Generator -------------------
+
+// Load quotes from localStorage or default quotes
 let quotes = JSON.parse(localStorage.getItem("quotes")) || [
-  {
-    text: "Code is like humor. When you have to explain it, it’s bad.",
-    category: "Programming",
-  },
+  { text: "Code is like humor. When you have to explain it, it’s bad.", category: "Programming" },
   { text: "Simplicity is the soul of efficiency.", category: "Tech" },
-  { text: "Consistency beats motivation.", category: "Life" },
+  { text: "Consistency beats motivation.", category: "Life" }
 ];
 
 // DOM elements
@@ -18,13 +17,12 @@ function saveQuotes() {
   localStorage.setItem("quotes", JSON.stringify(quotes));
 }
 
-// Populate categories dropdown
+// Populate categories dropdown dynamically
 function populateCategories() {
-  const categories = [...new Set(quotes.map((q) => q.category))];
-
+  const categories = [...new Set(quotes.map(q => q.category))];
   categoryFilter.innerHTML = '<option value="all">All Categories</option>';
 
-  categories.forEach((cat) => {
+  categories.forEach(cat => {
     const option = document.createElement("option");
     option.value = cat;
     option.textContent = cat;
@@ -40,10 +38,7 @@ function filterQuote() {
   const selectedCategory = categoryFilter.value;
   localStorage.setItem("lastCategoryFilter", selectedCategory);
 
-  const filteredQuotes =
-    selectedCategory === "all"
-      ? quotes
-      : quotes.filter((q) => q.category === selectedCategory);
+  const filteredQuotes = selectedCategory === "all" ? quotes : quotes.filter(q => q.category === selectedCategory);
 
   quoteDisplay.innerHTML = "";
   if (filteredQuotes.length === 0) {
@@ -53,7 +48,7 @@ function filterQuote() {
     return;
   }
 
-  filteredQuotes.forEach((q) => {
+  filteredQuotes.forEach(q => {
     const p = document.createElement("p");
     p.textContent = `"${q.text}"`;
 
@@ -68,10 +63,7 @@ function filterQuote() {
 // Show a random quote
 function showRandomQuote() {
   const selectedCategory = categoryFilter.value;
-  const filteredQuotes =
-    selectedCategory === "all"
-      ? quotes
-      : quotes.filter((q) => q.category === selectedCategory);
+  const filteredQuotes = selectedCategory === "all" ? quotes : quotes.filter(q => q.category === selectedCategory);
 
   if (filteredQuotes.length === 0) return;
 
@@ -119,9 +111,7 @@ function createAddQuoteForm() {
 
 // Export quotes to JSON
 function exportToJson() {
-  const blob = new Blob([JSON.stringify(quotes, null, 2)], {
-    type: "application/json",
-  });
+  const blob = new Blob([JSON.stringify(quotes, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
 
   const a = document.createElement("a");
@@ -135,7 +125,7 @@ function exportToJson() {
 // Import quotes from JSON
 function importFromJsonFile(event) {
   const fileReader = new FileReader();
-  fileReader.onload = function (e) {
+  fileReader.onload = function(e) {
     try {
       const importedQuotes = JSON.parse(e.target.result);
       if (Array.isArray(importedQuotes)) {
@@ -158,15 +148,15 @@ function importFromJsonFile(event) {
 
 const SERVER_API = "https://jsonplaceholder.typicode.com/posts";
 
-// Fetch server quotes
-async function fetchServerQuotes() {
+// Fetch server quotes (ALX expects this function name)
+async function fetchQuotesFromServer() {
   try {
     const response = await fetch(SERVER_API);
     const serverData = await response.json();
 
-    const serverQuotes = serverData.map((item) => ({
+    const serverQuotes = serverData.map(item => ({
       text: item.title || item.body,
-      category: item.userId ? `User ${item.userId}` : "General",
+      category: item.userId ? `User ${item.userId}` : "General"
     }));
 
     resolveConflicts(serverQuotes);
@@ -179,9 +169,9 @@ async function fetchServerQuotes() {
 function resolveConflicts(serverQuotes) {
   const mergedQuotes = [...serverQuotes];
 
-  quotes.forEach((localQuote) => {
+  quotes.forEach(localQuote => {
     const exists = serverQuotes.some(
-      (sq) => sq.text === localQuote.text && sq.category === localQuote.category
+      sq => sq.text === localQuote.text && sq.category === localQuote.category
     );
     if (!exists) mergedQuotes.push(localQuote);
   });
@@ -209,10 +199,11 @@ function showNotification(msg) {
 }
 
 // Periodically sync every 60 seconds
-setInterval(fetchServerQuotes, 60000);
+setInterval(fetchQuotesFromServer, 60000);
 
 // ------------------- Initialize -------------------
 populateCategories();
 filterQuote();
 newQuoteBtn.addEventListener("click", showRandomQuote);
 categoryFilter.addEventListener("change", filterQuote);
+
