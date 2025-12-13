@@ -127,8 +127,8 @@ function importFromJsonFile(event) {
 
 const SERVER_API = "https://jsonplaceholder.typicode.com/posts";
 
-// ALX expects this function name
-async function syncQuotes() {
+// Fetch server quotes
+async function fetchQuotesFromServer() {
   try {
     const response = await fetch(SERVER_API);
     const serverData = await response.json();
@@ -140,18 +140,22 @@ async function syncQuotes() {
 
     resolveConflicts(serverQuotes);
   } catch (error) {
-    console.error("Error syncing quotes with server:", error);
+    console.error("Error fetching server quotes:", error);
   }
 }
 
 // Post a new quote to the server (mock API)
 async function postQuoteToServer(quote) {
   try {
-    await fetch(SERVER_API, {
+    const response = await fetch(SERVER_API, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify(quote)
     });
+    const data = await response.json();
+    console.log("Quote posted to server:", data);
   } catch (error) {
     console.error("Error posting quote to server:", error);
   }
@@ -172,6 +176,7 @@ function resolveConflicts(serverQuotes) {
   saveQuotes();
   populateCategories();
   filterQuote();
+
   showNotification("Quotes synced with server");
 }
 
@@ -188,9 +193,6 @@ function showNotification(msg) {
   document.body.appendChild(notif);
   setTimeout(() => notif.remove(), 3000);
 }
-
-// Periodically sync with server every 60 seconds
-setInterval(syncQuotes, 60000);
 
 // ------------------- Add new quote -------------------
 
@@ -218,6 +220,9 @@ function createAddQuoteForm() {
   populateCategories();
   filterQuote();
 }
+
+// Periodically sync with server every 60 seconds
+setInterval(fetchQuotesFromServer, 60000);
 
 // ------------------- Initialize -------------------
 populateCategories();
