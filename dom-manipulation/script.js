@@ -127,7 +127,7 @@ function importFromJsonFile(event) {
 
 const SERVER_API = "https://jsonplaceholder.typicode.com/posts";
 
-// Sync quotes with server (ALX expects this function)
+// ALX expects this function name
 async function syncQuotes() {
   try {
     const response = await fetch(SERVER_API);
