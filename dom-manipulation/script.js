@@ -85,11 +85,16 @@ async function syncQuotes() {
     populateCategories();
     filterQuote();
 
-    showNotification("Quotes updated from server");
+    // ✅ ALX REQUIRED UI NOTIFICATION
+    alert("Quotes synced with server!");
+
+    // Optional visual notification (kept)
+    showNotification("Quotes synced with server!");
   } catch (error) {
     console.error("Sync error:", error);
   }
 }
+
 
 /**
  * ✅ REQUIRED BY ALX
